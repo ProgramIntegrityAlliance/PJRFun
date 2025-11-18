@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Fraud Prevention Capability Assessment</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --pia-teal: #00404a;
+      --pia-teal-light: #0f9c91;
+      --pia-orange: #e84e0f;
+      --bg-light: #f5f7f8;
+      --text-main: #222;
+      --text-muted: #555;
+      --border-soft: #dde2e6;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      margin: 0;
+      padding: 20px;
+      background: var(--bg-light);
+      color: var(--text-main);
+    }
+
+    .fp-wrapper {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 10px;
+      border: 1px solid var(--border-soft);
+      padding: 24px 24px 28px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+    }
+
+    .fp-header {
+      border-bottom: 1px solid var(--border-soft);
+      padding-bottom: 12px;
+      margin-bottom: 20px;
+    }
+
+    .fp-title {
+      font-size: 1.4rem;
+      margin: 0 0 6px;
+      color: var(--pia-teal);
+    }
+
+    .fp-subtitle {
+      margin: 0;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+    }
+
+    .fp-progress {
+      margin: 10px 0 0;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .fp-progress-bar {
+      width: 100%;
+      height: 6px;
+      background: #edf1f4;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 6px;
+    }
+
+    .fp-progress-bar-inner {
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, var(--pia-teal-light), var(--pia-orange));
+      transition: width 0.25s ease-out;
+    }
+
+    .fp-step {
+      display: none;
+      animation: fadeIn 0.3s ease-in;
+    }
+
+    .fp-step.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .fp-section-title {
+      font-size: 1.05rem;
+      margin-bottom: 6px;
+      color: var(--pia-teal);
+    }
+
+    .fp-section-hint {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
+
+    .fp-question {
+      padding: 12px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border-soft);
+      margin-bottom: 10px;
+      background: #fafbfc;
+      transition: border-color 0.2s;
+    }
+
+    .fp-question:hover {
+      border-color: var(--pia-teal-light);
+    }
+
+    .fp-question-text {
+      font-size: 0.95rem;
+      margin-bottom: 8px;
+    }
+
+    .fp-scale {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      font-size: 0.85rem;
+    }
+
+    .fp-scale label {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 5px 8px;
+      border-radius: 999px;
+      border: 1px solid #d3d9de;
+      cursor: pointer;
+      user-select: none;
+      background: #fff;
+      transition: all 0.2s;
+    }
+
+    .fp-scale label:hover {
+      background: #f0f8f8;
+      border-color: var(--pia-teal-light);
+    }
+
+    .fp-scale input[type="radio"]:checked + span {
+      font-weight: 600;
+    }
+
+    .fp-scale label:has(input:checked) {
+      background: var(--pia-teal);
+      color: white;
+      border-color: var(--pia-teal);
+    }
+
+    .fp-scale input[type="radio"] {
+      accent-color: var(--pia-teal);
+    }
+
+    .fp-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 18px;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .fp-nav-left,
+    .fp-nav-right {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .fp-btn {
+      border-radius: 999px;
+      padding: 8px 16px;
+      font-size: 0.9rem;
+      border: 1px solid transparent;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #fff;
+      transition: all 0.2s;
+    }
+
+    .fp-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .fp-btn-primary {
+      background: var(--pia-teal);
+      color: #fff;
+      border-color: var(--pia-teal);
+    }
+
+    .fp-btn-secondary {
+      border-color: var(--border-soft);
+      color: var(--text-main);
+    }
+
+    .fp-btn-primary:hover:not(:disabled) {
+      background: var(--pia-teal-light);
+      border-color: var(--pia-teal-light);
+    }
+
+    .fp-btn-secondary:hover:not(:disabled) {
+      background: #f2f4f6;
+    }
+
+    .fp-helper {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .fp-results {
+      font-size: 0.95rem;
+    }
+
+    .fp-score-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #edf7f7;
+      color: var(--pia-teal);
+      font-size: 0.85rem;
+      margin-bottom: 10px;
+    }
+
+    .fp-results-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .fp-result-card {
+      border-radius: 8px;
+      border: 1px solid var(--border-soft);
+      padding: 10px 11px;
+      background: #fafbfc;
+    }
+
+    .fp-result-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--pia-teal);
+      margin-bottom: 4px;
+    }
+
+    .fp-result-score {
+      font-size: 0.85rem;
+      margin-bottom: 4px;
+    }
+
+    .fp-result-level {
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .fp-result-text {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .fp-tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      margin-left: 6px;
+    }
+
+    .fp-tag-emerging {
+      background: #fff3e6;
+      color: #c65305;
+    }
+
+    .fp-tag-developing {
+      background: #fff9db;
+      color: #856404;
+    }
+
+    .fp-tag-established {
+      background: #e6f4ea;
+      color: #1b6d2f;
+    }
+
+    .fp-tag-leading {
+      background: #e3f2fd;
+      color: #0b5394;
+    }
+
+    .fp-alert {
+      font-size: 0.85rem;
+      color: #a94442;
+      background: #f8d7da;
+      border: 1px solid #f5c2c7;
+      border-radius: 6px;
+      padding: 6px 8px;
+      margin-bottom: 10px;
+      display: none;
+    }
+
+    .fp-chart-container {
+      margin: 20px 0;
+      padding: 15px;
+      background: #fafbfc;
+      border-radius: 8px;
+      border: 1px solid var(--border-soft);
+    }
+
+    .fp-chart-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--pia-teal);
+      margin-bottom: 10px;
+    }
+
+    .fp-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+      flex-wrap: wrap;
+    }
+
+    .fp-intro {
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: var(--text-muted);
+      margin-bottom: 15px;
+    }
+
+    .fp-intro-list {
+      margin: 10px 0;
+      padding-left: 20px;
+    }
+
+    .fp-intro-list li {
+      margin-bottom: 6px;
+    }
+
+    @media (max-width: 600px) {
+      .fp-wrapper {
+        padding: 16px 14px 20px;
+      }
+
+      .fp-scale {
+        flex-direction: column;
+      }
+
+      .fp-scale label {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .fp-actions {
+        flex-direction: column;
+      }
+
+      .fp-btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    @media print {
+      body {
+        background: white;
+        padding: 0;
+      }
+
+      .fp-wrapper {
+        box-shadow: none;
+        border: none;
+      }
+
+      .fp-nav, .fp-btn {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="fp-wrapper" id="fp-assessment">
+
+  <div class="fp-header">
+    <h1 class="fp-title">Fraud Prevention Capability Assessment</h1>
+    <p class="fp-subtitle">
+      Use this quick self-assessment to get a snapshot of your organisation's ability to prevent fraud,
+      across governance, risk assessment, data use, controls, and learning.
+    </p>
+    <div class="fp-progress">
+      <span id="fp-step-label">Section 1 of 5</span>
+      <div class="fp-progress-bar">
+        <div class="fp-progress-bar-inner" id="fp-progress-bar"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="fp-alert" class="fp-alert">Please answer all questions in this section before continuing.</div>
+
+  <!-- Introduction step -->
+  <div class="fp-step active" data-step="0" id="fp-intro-step">
+    <div class="fp-section-title">Welcome to the Fraud Prevention Capability Assessment</div>
+    <div class="fp-intro">
+      <p>This assessment will help you evaluate your organization's fraud prevention maturity across five critical domains:</p>
+      <ul class="fp-intro-list">
+        <li><strong>Governance and Accountability:</strong> Leadership, policies, and roles</li>
+        <li><strong>Fraud Risk Assessment:</strong> How you identify and prioritize fraud risks</li>
+        <li><strong>Data and Analytics:</strong> Using data to prevent and detect fraud</li>
+        <li><strong>Controls and Operations:</strong> Prevention and detection mechanisms</li>
+        <li><strong>Monitoring and Learning:</strong> Performance tracking and continuous improvement</li>
+      </ul>
+      <p>The assessment takes approximately <strong>10-15 minutes</strong> to complete. You'll answer 15 questions using a 5-point scale, and receive immediate feedback with actionable insights.</p>
+      <p><strong>Your responses are saved automatically</strong> in your browser, so you can return to complete it later if needed.</p>
+    </div>
+  </div>
+
+  <!-- Step 1: Governance and accountability -->
+  <div class="fp-step" data-step="1" data-domain="Governance and accountability">
+    <div class="fp-section-title">Governance and accountability</div>
+    <div class="fp-section-hint">
+      Consider policies, roles, and leadership expectations for fraud prevention.
+    </div>
+
+    <div class="fp-question">
+      <div class="fp-question-text">
+        1. Clear roles and responsibilities for fraud risk management are defined and communicated.
+      </div>
+      <div class="fp-scale" data-domain-question>
+        <label><input type="radio" name="q1" value="1"><span>Not in place</span></label>
+        <label><input type="radio" name="q1" value="2"><span>Basic</span></label>
+        <label><input type="radio" name="q1" value="3"><span>Developing</span></label>
+        <label><input type="radio" name="q1" value="4"><span>Good</span></label>
+        <label><input type="radio" name="q1" value="5"><span>Fully in place</span></label>
+      </div>
+    </div>
+
+    <div class="fp-question">
+      <div class="fp-question-text">
+        2. Senior leaders receive regular reporting on fraud risks and prevention activity.
+      </div>
+      <div class="fp-scale" data-domain-question>
+        <label><input type="radio" name="q2" value="1"><span>Not in place</span></label>
+        <label><input type="radio" name="q2" value="2"><span>Basic</span></label>
+        <label><input type="radio" name="q2" value="3"><span>Developing</span></label>
+        <label><input type="radio" name="q2" value="4"><span>Good</span></label>
+        <label><input type="radio" name="q2" value="5"><span>Fully in place</span></label>
+      </div>
+    </div>
+
+    <div class="fp-question">
+      <div class="fp-question-text">
+        3. There is a documented fraud risk management policy that covers prevention, detection, and response.
+      </div>
+      <div class="fp-scale" data-domain-question>
+        <label><input type="radio" name="q3" value="1"><span>Not in place</span></label>
+        <label><input type="radio" name="q3" value="2"><span>Basic</span></label>
+        <label><input type="radio" name="q3" value="3"><span>Developing</span></label>
+        <label><input type="radio" name="q3" value="4"><span>Good</span></label>
+        <label><input type="radio" name="q3" value="5"><span>Fully in place</span></label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 2: Fraud risk assessment -->
+  <div class="fp-step" data-step="2" data-domain="Fraud risk assessment">
+    <div class="fp-section-title">Fraud risk assessment</div>
+    <div class="fp-section-hint">
+      Think about how you identify, assess, and prioritise fraud risks.
+    </div>
+
+    <div class="fp-question">
+      <div class="fp-question-text">
+        4. The organisation regularly conducts structured fraud risk assessments for key programmes or processes.
+      </div>
+      <div class="fp-scale" data-domain-question>
+        <label><input type="radio" name="q4" value="1"><span>Not in place</span></label>
+        <label><input type="radio" name="q4" value="2"><span>Basic</span></label>
+        <label><input type="radio" name="q4" value="3"><span>Developing</span></label>
+        <label><input type="radio" name="q4" value="4"><span>Good</span></label>
+        <label><input type="radio" name="q4" value="5"><span>Fully in place</span></label>
+      </div>
+    </div>
+
+    <div class="fp-question">
+      <div class="fp-question-text">
+        5. Fraud risk assessments consider inherent and residual risk and link to control design.
+      </div>
+      <div class="fp-scale" data-domain-question>
+        <label><input type="radio" name="q5" value="1"><span>Not in place</span></label>
+        <label><input type="radio" name="q5" value="2"><span>Basic</span></label>
+        <label><input type="radio" name="q5" value="3"><span>Developing</span></label>
+        <label><input type="radio" name="q5" value="4"><span>Good</span></label>
+        <label><input type="radio" name="q5" value="5"><span>Fully in place</span></label>
+      </div>
+    </div>
+
+    <div class="fp-question">
+      <div class="fp-question-text">
+        6. Fraud risks are integrated into broader enterprise risk management and planning.
+      </div>
+      <div class="fp-scale" data-domain-question>
+        <label><input type="radio" name="q6" value="1"><span>Not in place</span></label>
+        <label><input type="radio" name="q6" value="2"><span>Basic</span></label>
+        <label><input type="radio" name="q6" value="3"><span>Developing</span></label>
+        <label><input type="radio" name="q6" value="4"><span>Good</span></label>
+        <label><input type="radio" name="q6" value="5"><span>Fully in place</span></label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 3: Data and analytics -->
+  <div class="fp-step" data-step="3" data-domain="Data and analytics for fraud prevention">
+    <div class="fp-section-title">Data and analytics for fraud prevention</div>
+    <div class="fp-section-hint">
+      Focus on how you use data to prevent and detect fraud, not only to investigate losses.
+    </div>
+
+    <div class="fp-question">
+      <div class="fp-question-text">
+        7. Key datasets (for example, payments, eligibility, identity, vendor data) are available and linked for fraud analysis.
+      </div>
+      <div class="fp-scale" data-domain-question>
+        <label><input type="radio" name="q7" value="1"><span>Not in place</span></label>
+        <label><input type="radio" name="q7" value="2"><span>Basic</span></label>
+        <label><input type="radio" name="q7" value="3"><span>Developing</span></label>
+        <label><input type="radio" name="q7" value="4"><span>Good</span></label>
+        <label><input type="radio" name="q7" value="5"><span>Fully in place</span></label>
+      </div>
+    </div>
+
+    <div class="fp-question">
+      <div class="fp-question-text">
+        8. The organisation uses analytics or rules to flag high-risk cases before payment or decision.
+      </div>
+      <div class="fp-scale" data-domain-question>
+        <label><input type="radio" name="q8" value="1"><span>Not in place</span></label>
+        <label><input type="radio" name="q8" value="2"><span>Basic</span></label>
+        <label><input type="radio" name="q8" value="3"><span>Developing</span></label>
+        <label><input type="radio" name="q8" value="4"><span>Good</span></label>
+        <label><input type="radio" name="q8" value="5"><span>Fully in place</span></label>
+      </div>
+    </div>
+
+    <div class="fp-question">
+      <div class="fp-question-text">
+        9. Data engineers or analysts work with fraud and programme staff to refine models or rules over time.
+      </div>
+      <div class="fp-scale" data-domain-question>
+        <label><input type="radio" name="q9" value="1"><span>Not in place</span></label>
+        <label><input type="radio" name="q9" value="2"><span>Basic</span></label>
+        <label><input type="radio" name="q9" value="3"><span>Developing</span></label>
+        <label><input type="radio" name="q9" value="4"><span>Good</span></label>
+        <label><input type="radio" name="q9" value="5"><span>Fully in place</span></label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 4: Controls and operations -->
+  <div class="fp-step" data-step="4" data-domain="Controls and operations">
+    <div class="fp-section-title">Controls and operations</div>
+    <div class="fp-section-hint">
+      Think about controls in design and in practice, including automation and manual checks.
+    </div>
+
+    <div class="fp-question">
+      <div class="fp-question-text">
+        10. Key fraud controls are documented, mapped to risks, and applied consistently across regions or units.
+      </div>
+      <div class="fp-scale" data-domain-question>
+        <label><input type="radio" name="q10" value="1"><span>Not in place</span></label>
+        <label><input type="radio" name="q10" value="2"><span>Basic</span></label>
+        <label><input type="radio" name="q10" value="3"><span>Developing</span></label>
+        <label><input type="radio" name="q10" value="4"><span>Good</span></label>
+        <label><input type="radio" name="q10" value="5"><span>Fully in place</span></label>
+      </div>
+    </div>
+
+    <div class="fp-question">
+      <div class="fp-question-text">
+        11. Preventive controls are embedded in core systems and processes, not limited to detective or after-the-fact checks.
+      </div>
+      <div class="fp-scale" data-domain-question>
+        <label><input type="radio" name="q11" value="1"><span>Not in place</span></label>
+        <label><input type="radio" name="q11" value="2"><span>Basic</span></label>
+        <label><input type="radio" name="q11" value="3"><span>Developing</span></label>
+        <label><input type="radio" name="q11" value="4"><span>Good</span></label>
+        <label><input type="radio" name="q11" value="5"><span>Fully in place</span></label>
+      </div>
+    </div>
+
+    <div class="fp-question">
+      <div class="fp-question-text">
+        12. There are clear procedures for handling suspected fraud cases, including escalation and suspension of payments where appropriate.
+      </div>
+      <div class="fp-scale" data-domain-question>
+        <label><input type="radio" name="q12" value="1"><span>Not in place</span></label>
+        <label><input type="radio" name="q12" value="2"><span>Basic</span></label>
+        <label><input type="radio" name="q12" value="3"><span>Developing</span></label>
+        <label><input type="radio" name="q12" value="4"><span>Good</span></label>
+        <label><input type="radio" name="q12" value="5"><span>Fully in place</span></label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 5: Monitoring and learning -->
+  <div class="fp-step" data-step="5" data-domain="Monitoring, oversight, and learning">
+    <div class="fp-section-title">Monitoring, oversight, and learning</div>
+    <div class="fp-section-hint">
+      Look at how you track performance, respond to findings, and improve over time.
+    </div>
+
+    <div class="fp-question">
+      <div class="fp-question-text">
+        13. The organisation tracks indicators for fraud prevention performance, not only fraud outcomes or losses.
+      </div>
+      <div class="fp-scale" data-domain-question>
+        <label><input type="radio" name="q13" value="1"><span>Not in place</span></label>
+        <label><input type="radio" name="q13" value="2"><span>Basic</span></label>
+        <label><input type="radio" name="q13" value="3"><span>Developing</span></label>
+        <label><input type="radio" name="q13" value="4"><span>Good</span></label>
+        <label><input type="radio" name="q13" value="5"><span>Fully in place</span></label>
+      </div>
+    </div>
+
+    <div class="fp-question">
+      <div class="fp-question-text">
+        14. Oversight body recommendations related to fraud are tracked, prioritised, and implemented with clear owners.
+      </div>
+      <div class="fp-scale" data-domain-question>
+        <label><input type="radio" name="q14" value="1"><span>Not in place</span></label>
+        <label><input type="radio" name="q14" value="2"><span>Basic</span></label>
+        <label><input type="radio" name="q14" value="3"><span>Developing</span></label>
+        <label><input type="radio" name="q14" value="4"><span>Good</span></label>
+        <label><input type="radio" name="q14" value="5"><span>Fully in place</span></label>
+      </div>
+    </div>
+
+    <div class="fp-question">
+      <div class="fp-question-text">
+        15. Lessons from detected fraud cases inform design changes in policy, process, or controls.
+      </div>
+      <div class="fp-scale" data-domain-question>
+        <label><input type="radio" name="q15" value="1"><span>Not in place</span></label>
+        <label><input type="radio" name="q15" value="2"><span>Basic</span></label>
+        <label><input type="radio" name="q15" value="3"><span>Developing</span></label>
+        <label><input type="radio" name="q15" value="4"><span>Good</span></label>
+        <label><input type="radio" name="q15" value="5"><span>Fully in place</span></label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Results step -->
+  <div class="fp-step" data-step="6" id="fp-results-step">
+    <div class="fp-section-title">Your results</div>
+    <div class="fp-section-hint">
+      These scores are indicative, not an audit. Use them to start a focused discussion about where to strengthen fraud prevention.
+    </div>
+    <div id="fp-overall-score" class="fp-score-badge"></div>
+
+    <!-- Chart container -->
+    <div class="fp-chart-container">
+      <div class="fp-chart-title">Domain Scores Overview</div>
+      <canvas id="fp-chart" style="max-height: 300px;"></canvas>
+    </div>
+
+    <div class="fp-results" id="fp-domain-results"></div>
+
+    <div class="fp-actions">
+      <button type="button" class="fp-btn fp-btn-primary" id="fp-download-pdf">Download PDF Report</button>
+      <button type="button" class="fp-btn fp-btn-secondary" id="fp-reset">Start New Assessment</button>
+    </div>
+
+    <div class="fp-nav" style="margin-top: 18px;">
+      <div class="fp-nav-left">
+        <button type="button" class="fp-btn fp-btn-secondary" id="fp-back-results">Back to answers</button>
+      </div>
+      <div class="fp-nav-right">
+        <span class="fp-helper">You can also print this page (Ctrl+P) or save it from your browser.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <div class="fp-nav" id="fp-nav-main">
+    <div class="fp-nav-left">
+      <button type="button" class="fp-btn fp-btn-secondary" id="fp-prev" disabled>Previous</button>
+    </div>
+    <div class="fp-nav-right">
+      <button type="button" class="fp-btn fp-btn-primary" id="fp-next">
+        Next
+      </button>
+    </div>
+  </div>
+
+</div>
+
+<!-- Include Chart.js from CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<!-- Include jsPDF from CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<script>
+(function () {
+  const steps = Array.from(document.querySelectorAll(".fp-step"));
+  const totalSteps = steps.length;
+  const totalQuestionSteps = 5; // Steps 1-5 are questions, 0 is intro, 6 is results
+  const progressBar = document.getElementById("fp-progress-bar");
+  const stepLabel = document.getElementById("fp-step-label");
+  const alertBox = document.getElementById("fp-alert");
+  const nextBtn = document.getElementById("fp-next");
+  const prevBtn = document.getElementById("fp-prev");
+  const navMain = document.getElementById("fp-nav-main");
+  const resultsStep = document.getElementById("fp-results-step");
+  const introStep = document.getElementById("fp-intro-step");
+  const backFromResultsBtn = document.getElementById("fp-back-results");
+  const overallScoreEl = document.getElementById("fp-overall-score");
+  const domainResultsEl = document.getElementById("fp-domain-results");
+  const downloadPdfBtn = document.getElementById("fp-download-pdf");
+  const resetBtn = document.getElementById("fp-reset");
+
+  let currentStep = 0;
+  let chartInstance = null;
+
+  // Load saved progress from localStorage
+  function loadProgress() {
+    try {
+      const saved = localStorage.getItem('fp-assessment-data');
+      if (saved) {
+        const data = JSON.parse(saved);
+        for (const [name, value] of Object.entries(data)) {
+          const radio = document.querySelector(`input[name="${name}"][value="${value}"]`);
+          if (radio) radio.checked = true;
+        }
+      }
+    } catch (e) {
+      console.error('Failed to load progress:', e);
+    }
+  }
+
+  // Save progress to localStorage
+  function saveProgress() {
+    try {
+      const data = {};
+      for (let i = 1; i <= 15; i++) {
+        const checked = document.querySelector(`input[name="q${i}"]:checked`);
+        if (checked) data[`q${i}`] = checked.value;
+      }
+      localStorage.setItem('fp-assessment-data', JSON.stringify(data));
+    } catch (e) {
+      console.error('Failed to save progress:', e);
+    }
+  }
+
+  // Update progress bar
+  function updateProgress() {
+    if (currentStep === 0) {
+      stepLabel.textContent = "Introduction";
+      progressBar.style.width = "0%";
+    } else if (currentStep <= totalQuestionSteps) {
+      stepLabel.textContent = `Section ${currentStep} of ${totalQuestionSteps}`;
+      const pct = ((currentStep - 1) / totalQuestionSteps) * 100;
+      progressBar.style.width = pct + "%";
+    } else {
+      stepLabel.textContent = "Results";
+      progressBar.style.width = "100%";
+    }
+  }
+
+  // Show specific step
+  function showStep(index) {
+    steps.forEach((step, i) => {
+      step.classList.toggle("active", i === index);
+    });
+    currentStep = index;
+    alertBox.style.display = "none";
+
+    // Update navigation buttons
+    prevBtn.disabled = currentStep === 0;
+
+    if (currentStep === 0) {
+      nextBtn.textContent = "Start Assessment";
+    } else if (currentStep === totalQuestionSteps) {
+      nextBtn.textContent = "View Results";
+    } else if (currentStep > totalQuestionSteps) {
+      navMain.style.display = "none";
+    } else {
+      nextBtn.textContent = "Next";
+    }
+
+    // Show/hide main navigation
+    if (currentStep > totalQuestionSteps) {
+      navMain.style.display = "none";
+    } else {
+      navMain.style.display = "flex";
+    }
+
+    updateProgress();
+    window.scrollTo(0, 0);
+  }
+
+  // Validate that all questions in a step are answered
+  function validateStep(index) {
+    const step = steps[index];
+    // Intro and results steps don't need validation
+    if (index === 0 || index > totalQuestionSteps) return true;
+
+    const radios = step.querySelectorAll("input[type='radio']");
+    if (!radios.length) return true;
+
+    const names = new Set(Array.from(radios).map(r => r.name));
+    for (const name of names) {
+      const checked = step.querySelector(`input[name='${name}']:checked`);
+      if (!checked) return false;
+    }
+    return true;
+  }
+
+  // Classify maturity level based on score
+  function classifyLevel(score) {
+    if (score < 30) return { level: "Emerging", tagClass: "fp-tag-emerging" };
+    if (score < 60) return { level: "Developing", tagClass: "fp-tag-developing" };
+    if (score < 80) return { level: "Established", tagClass: "fp-tag-established" };
+    return { level: "Leading", tagClass: "fp-tag-leading" };
+  }
+
+  // Get descriptive text for each level
+  function getLevelText(level) {
+    switch (level) {
+      case "Emerging":
+        return "Basic elements are present, but fraud prevention is mostly ad hoc. Consider clarifying roles, policies, and minimum controls.";
+      case "Developing":
+        return "You have several building blocks in place, but coverage is uneven. Focus on consistency and closing obvious gaps.";
+      case "Established":
+        return "Fraud prevention is part of regular management practice. The next step is to strengthen data use and continuous improvement.";
+      case "Leading":
+        return "Fraud prevention is actively managed and data informed. You can share practice with peers and test more advanced approaches.";
+      default:
+        return "";
+    }
+  }
+
+  // Get recommendations based on level
+  function getRecommendations(domain, level) {
+    const recommendations = {
+      "Governance and accountability": {
+        "Emerging": "Define clear fraud prevention roles and responsibilities. Develop a basic fraud risk management policy.",
+        "Developing": "Establish regular fraud reporting to senior leadership. Ensure policies are communicated organization-wide.",
+        "Established": "Integrate fraud prevention into strategic planning. Consider external benchmarking.",
+        "Leading": "Share your governance framework with peer organizations. Explore innovative accountability mechanisms."
+      },
+      "Fraud risk assessment": {
+        "Emerging": "Conduct an initial fraud risk assessment for your highest-value programs.",
+        "Developing": "Standardize your risk assessment methodology. Document inherent and residual risks.",
+        "Established": "Integrate fraud risks into enterprise risk management. Update assessments regularly.",
+        "Leading": "Develop predictive fraud risk indicators. Share your methodology with the sector."
+      },
+      "Data and analytics for fraud prevention": {
+        "Emerging": "Identify and catalogue key datasets relevant to fraud. Establish data governance.",
+        "Developing": "Implement basic data matching and anomaly detection. Train staff on data analysis.",
+        "Established": "Deploy advanced analytics and machine learning models. Create feedback loops for model improvement.",
+        "Leading": "Share de-identified fraud data with research networks. Pilot cutting-edge detection techniques."
+      },
+      "Controls and operations": {
+        "Emerging": "Document your current fraud controls. Map controls to specific risks.",
+        "Developing": "Ensure consistent control application across units. Implement automated preventive controls.",
+        "Established": "Regularly test control effectiveness. Optimize the balance between prevention and user experience.",
+        "Leading": "Design adaptive controls that respond to emerging fraud patterns. Publish control frameworks."
+      },
+      "Monitoring, oversight, and learning": {
+        "Emerging": "Define basic fraud prevention metrics (not just losses). Establish reporting routines.",
+        "Developing": "Track oversight recommendations systematically. Create a lessons learned process.",
+        "Established": "Measure prevention effectiveness, not just detection. Use metrics to drive improvement.",
+        "Leading": "Develop leading indicators of fraud risk. Share insights through case studies and research."
+      }
+    };
+    return recommendations[domain]?.[level] || "";
+  }
+
+  // Calculate and display results
+  function calculateResults() {
+    const domainScores = {};
+    const domainCounts = {};
+    let totalScore = 0;
+    let totalQuestions = 0;
+
+    // Loop over question steps only (steps 1-5)
+    for (let i = 1; i <= totalQuestionSteps; i++) {
+      const step = steps[i];
+      const domain = step.getAttribute("data-domain") || "Overall";
+      const radios = step.querySelectorAll("input[type='radio']:checked");
+
+      radios.forEach(r => {
+        const val = parseInt(r.value, 10);
+        if (!domainScores[domain]) {
+          domainScores[domain] = 0;
+          domainCounts[domain] = 0;
+        }
+        domainScores[domain] += val;
+        domainCounts[domain] += 1;
+        totalScore += val;
+        totalQuestions += 1;
+      });
+    }
+
+    const domainPercentages = [];
+    for (const d in domainScores) {
+      const avg = domainScores[d] / domainCounts[d]; // 1-5
+      const pct = Math.round((avg / 5) * 100);
+      domainPercentages.push({ domain: d, pct, raw: avg });
+    }
+
+    const overallPct = totalQuestions
+      ? Math.round((totalScore / (totalQuestions * 5)) * 100)
+      : 0;
+
+    // Render overall summary
+    const overallLevel = classifyLevel(overallPct);
+    overallScoreEl.innerHTML =
+      "<strong>Overall capability:</strong> " +
+      overallPct +
+      "/100" +
+      ' <span class="fp-tag ' +
+      overallLevel.tagClass +
+      '">' +
+      overallLevel.level +
+      "</span>";
+
+    // Render domain cards
+    let html = '<div class="fp-results-grid">';
+    domainPercentages.forEach(item => {
+      const info = classifyLevel(item.pct);
+      const recommendation = getRecommendations(item.domain, info.level);
+      html +=
+        '<div class="fp-result-card">' +
+        '<div class="fp-result-title">' +
+        item.domain +
+        "</div>" +
+        '<div class="fp-result-score">Score: ' +
+        item.pct +
+        "/100</div>" +
+        '<div class="fp-result-level">' +
+        'Level: <span class="fp-tag ' +
+        info.tagClass +
+        '">' +
+        info.level +
+        "</span></div>" +
+        '<div class="fp-result-text" style="margin-bottom: 8px;">' +
+        getLevelText(info.level) +
+        "</div>";
+
+      if (recommendation) {
+        html += '<div class="fp-result-text"><strong>Next step:</strong> ' + recommendation + '</div>';
+      }
+
+      html += "</div>";
+    });
+    html += "</div>";
+    domainResultsEl.innerHTML = html;
+
+    // Create chart
+    createChart(domainPercentages);
+
+    // Store results for PDF generation
+    window.fpAssessmentResults = {
+      overallPct,
+      overallLevel: overallLevel.level,
+      domains: domainPercentages.map(item => ({
+        ...item,
+        level: classifyLevel(item.pct).level
+      }))
+    };
+  }
+
+  // Create Chart.js visualization
+  function createChart(domainPercentages) {
+    const canvas = document.getElementById('fp-chart');
+    const ctx = canvas.getContext('2d');
+
+    // Destroy existing chart if it exists
+    if (chartInstance) {
+      chartInstance.destroy();
+    }
+
+    const labels = domainPercentages.map(d => d.domain);
+    const data = domainPercentages.map(d => d.pct);
+    const colors = data.map(pct => {
+      if (pct < 30) return 'rgba(198, 83, 5, 0.8)';
+      if (pct < 60) return 'rgba(133, 100, 4, 0.8)';
+      if (pct < 80) return 'rgba(27, 109, 47, 0.8)';
+      return 'rgba(11, 83, 148, 0.8)';
+    });
+
+    chartInstance = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Capability Score (%)',
+          data: data,
+          backgroundColor: colors,
+          borderColor: colors.map(c => c.replace('0.8', '1')),
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 100,
+            ticks: {
+              callback: function(value) {
+                return value + '%';
+              }
+            }
+          }
+        },
+        plugins: {
+          legend: {
+            display: false
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return 'Score: ' + context.parsed.y + '%';
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+
+  // Generate PDF report
+  function generatePDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    const results = window.fpAssessmentResults;
+
+    if (!results) return;
+
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const margin = 20;
+    let yPos = 20;
+
+    // Title
+    doc.setFontSize(18);
+    doc.setTextColor(0, 64, 74);
+    doc.text('Fraud Prevention Capability Assessment', margin, yPos);
+    yPos += 10;
+
+    // Date
+    doc.setFontSize(10);
+    doc.setTextColor(85, 85, 85);
+    doc.text('Generated: ' + new Date().toLocaleDateString(), margin, yPos);
+    yPos += 15;
+
+    // Overall Score
+    doc.setFontSize(14);
+    doc.setTextColor(0, 64, 74);
+    doc.text('Overall Capability', margin, yPos);
+    yPos += 8;
+
+    doc.setFontSize(12);
+    doc.setTextColor(34, 34, 34);
+    doc.text(`Score: ${results.overallPct}/100 (${results.overallLevel})`, margin, yPos);
+    yPos += 15;
+
+    // Domain scores
+    doc.setFontSize(14);
+    doc.setTextColor(0, 64, 74);
+    doc.text('Domain Scores', margin, yPos);
+    yPos += 10;
+
+    doc.setFontSize(11);
+    doc.setTextColor(34, 34, 34);
+
+    results.domains.forEach(domain => {
+      if (yPos > 270) {
+        doc.addPage();
+        yPos = 20;
+      }
+
+      doc.setFont(undefined, 'bold');
+      doc.text(domain.domain, margin, yPos);
+      yPos += 6;
+
+      doc.setFont(undefined, 'normal');
+      doc.text(`Score: ${domain.pct}/100 (${domain.level})`, margin + 5, yPos);
+      yPos += 6;
+
+      const recommendation = getRecommendations(domain.domain, domain.level);
+      if (recommendation) {
+        const lines = doc.splitTextToSize(recommendation, pageWidth - margin * 2 - 5);
+        lines.forEach(line => {
+          if (yPos > 270) {
+            doc.addPage();
+            yPos = 20;
+          }
+          doc.text(line, margin + 5, yPos);
+          yPos += 5;
+        });
+      }
+      yPos += 5;
+    });
+
+    // Footer
+    if (yPos > 250) {
+      doc.addPage();
+      yPos = 20;
+    }
+    yPos = doc.internal.pageSize.getHeight() - 20;
+    doc.setFontSize(8);
+    doc.setTextColor(85, 85, 85);
+    doc.text('This is an indicative self-assessment, not an audit or certification.', margin, yPos);
+
+    // Save the PDF
+    doc.save('fraud-prevention-assessment-' + new Date().toISOString().split('T')[0] + '.pdf');
+  }
+
+  // Event listeners
+  nextBtn.addEventListener("click", function () {
+    if (!validateStep(currentStep)) {
+      alertBox.style.display = "block";
+      alertBox.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      return;
+    }
+
+    saveProgress();
+
+    if (currentStep < totalSteps - 1) {
+      showStep(currentStep + 1);
+    }
+
+    if (currentStep === totalSteps - 1) {
+      calculateResults();
+    }
+  });
+
+  prevBtn.addEventListener("click", function () {
+    if (currentStep > 0) {
+      showStep(currentStep - 1);
+    }
+  });
+
+  backFromResultsBtn.addEventListener("click", function () {
+    showStep(totalQuestionSteps);
+  });
+
+  downloadPdfBtn.addEventListener("click", function () {
+    generatePDF();
+  });
+
+  resetBtn.addEventListener("click", function () {
+    if (confirm('Are you sure you want to start a new assessment? This will clear all your current answers.')) {
+      localStorage.removeItem('fp-assessment-data');
+      document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
+      showStep(0);
+    }
+  });
+
+  // Auto-save on radio change
+  document.querySelectorAll('input[type="radio"]').forEach(radio => {
+    radio.addEventListener('change', saveProgress);
+  });
+
+  // Initialize
+  loadProgress();
+  showStep(0);
+})();
+</script>
+</body>
+</html>
